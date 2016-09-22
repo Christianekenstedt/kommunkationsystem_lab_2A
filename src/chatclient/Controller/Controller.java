@@ -7,6 +7,8 @@ import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 
+import java.rmi.RemoteException;
+
 public class Controller {
 
     @FXML
@@ -22,15 +24,22 @@ public class Controller {
     @FXML
     public void sendBtnPressed(ActionEvent event) {
         String input = inputField.getText();
-        if (chatClient != null){
-            if(input.length()>3){
-                chatClient.start(input);
-            }else{
-                addMessage("Invalid hostname");
+
+        if(chatClient.isConnected()){
+            if(input.length() > 0){
+                chatClient.sendToServer(input);
             }
         }else{
-            if (input.length()>0){
-                // Skicka från klienten.
+            if(input.length() > 3){
+                chatClient.start(input);
+                if(chatClient.isConnected()){
+                    clear();
+                }else{
+                    addMessage("Could not connect to host.");
+                }
+
+            }else{
+                addMessage("Invalid hostname.");
             }
         }
         inputField.clear();

@@ -3,10 +3,13 @@ package chatclient;
 import chatclient.Controller.Controller;
 import chatclient.Model.ChatClient;
 import javafx.application.Application;
+import javafx.application.Platform;
+import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 
 public class Main extends Application {
 
@@ -22,6 +25,19 @@ public class Main extends Application {
         Controller controller = loader.getController();
         ChatClient chatClient = new ChatClient(controller);
         controller.setChatClient(chatClient);
+
+        primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+            @Override
+            public void handle(WindowEvent event) {
+                System.out.println("Exiting.");
+
+                chatClient.stop();
+
+                Platform.exit();
+                System.exit(0);
+            }
+
+        });
 
         primaryStage.show();
 

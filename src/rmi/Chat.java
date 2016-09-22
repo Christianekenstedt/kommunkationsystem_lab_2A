@@ -12,5 +12,5 @@ public interface Chat extends Remote{
 
     void deregister(Notifiable n) throws RemoteException;
 
-    void sendMessage(String s) throws RemoteException;
+    void sendMessage(Notifiable n, String s) throws RemoteException;
 }

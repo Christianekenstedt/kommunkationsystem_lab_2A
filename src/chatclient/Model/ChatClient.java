@@ -1,10 +1,11 @@
 package chatclient.Model;
 
 import chatclient.Controller.Controller;
+import javafx.application.Platform;
 import rmi.Chat;
 import rmi.Notifiable;
 
-import java.rmi.NotBoundException;
+import java.rmi.Naming;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 
@@ -14,30 +15,27 @@ import java.rmi.server.UnicastRemoteObject;
 public class ChatClient extends UnicastRemoteObject implements Notifiable {
 
     private Controller controller;
-    private int port;
-    private String serverName;
     private Chat chat = null;
+
+    public boolean isConnected() {
+        return connected;
+    }
+
+    private boolean connected = false;
+
     public ChatClient(Controller controller) throws RemoteException {
         super();
         this.controller = controller;
     }
 
-    private void setChat(Chat chat){
-        this.chat = chat;
-    }
-
     public void start(String host){
-        //TODO: Take all input and doo lookup
-
-
         try{
             String url = "rmi://"+host+"/"+"Chat";
-            //Chat chat = (Chat) Namin.lookup(url);
-            this.setChat(chat);
+            this.chat = (Chat) Naming.lookup(url);
 
             chat.register(this);
-
-            this.run();
+            connected = true;
+            //controller.clear();
 
         } catch (Exception exc){
             System.out.println(exc.toString());
@@ -45,12 +43,39 @@ public class ChatClient extends UnicastRemoteObject implements Notifiable {
 
     }
 
-    public void run(){
+    public void sendToServer(String s){
+        try {
+            chat.sendMessage(this, s);
+        } catch (RemoteException e) {
+            Platform.runLater(() -> controller.addMessage("Could not send message to server."));
+            connected = false;
+            stop();
+        }
+    }
 
+    public void stop(){
+        try {
+            if(isConnected()){
+                chat.deregister(this);
+            }
+        } catch (RemoteException e) {
+            Platform.runLater(() -> controller.addMessage("Could not deregister. No connection to server."));
+        }finally {
+            controller.reset();
+            connected = false;
+            Platform.runLater(() -> controller.addMessage("Connection closed."));
+        }
     }
 
     @Override
     public void send(String s) throws RemoteException {
+        Platform.runLater(() -> controller.addMessage(s));
+    }
 
+    @Override
+    public void disconnect(String reason) throws RemoteException {
+        Platform.runLater(() -> controller.addMessage("Disconnected from server."));
+        controller.reset();
+        connected = false;
     }
 }

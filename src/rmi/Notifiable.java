@@ -8,4 +8,5 @@ import java.rmi.RemoteException;
  */
 public interface Notifiable extends Remote {
     void send(String s) throws RemoteException;
+    void disconnect(String reason) throws RemoteException;
 }
