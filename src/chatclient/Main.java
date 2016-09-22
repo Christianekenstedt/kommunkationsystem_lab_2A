@@ -15,7 +15,7 @@ public class Main extends Application {
                 getClass().getResource("View/chatclient.fxml")
         );
         Parent root = loader.load();
-        primaryStage.setTitle("Chat Client");
+        primaryStage.setTitle("Chat Notifiable");
         primaryStage.setScene(new Scene(root, 400, 400));
 
         Controller controller = loader.getController();
