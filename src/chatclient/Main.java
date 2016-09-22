@@ -1,6 +1,7 @@
 package chatclient;
 
 import chatclient.Controller.Controller;
+import chatclient.Model.ChatClient;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -19,8 +20,11 @@ public class Main extends Application {
         primaryStage.setScene(new Scene(root, 400, 400));
 
         Controller controller = loader.getController();
-        //TODO: Ev skicka in controller till någon datamodell och datamodell till controller.
+        ChatClient chatClient = new ChatClient(controller);
+        controller.setChatClient(chatClient);
+
         primaryStage.show();
+
     }
 
 
