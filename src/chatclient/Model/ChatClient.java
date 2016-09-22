@@ -1,6 +1,8 @@
 package chatclient.Model;
 
 import chatclient.Controller.Controller;
+import rmi.Chat;
+import rmi.Notifiable;
 
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
@@ -9,7 +11,7 @@ import java.rmi.server.UnicastRemoteObject;
 /**
  * Created by chris on 2016-09-22.
  */
-public class ChatClient extends UnicastRemoteObject {
+public class ChatClient extends UnicastRemoteObject implements Notifiable {
 
     private Controller controller;
     private int port;
@@ -36,15 +38,19 @@ public class ChatClient extends UnicastRemoteObject {
             chat.register(this);
 
             this.run();
-        }catch(NotBoundException nbe){
-            System.out.println(nbe.toString());
-            System.out.println("'Chat' not avaliable.");
 
-        }catch (Exception exc){
+        } catch (Exception exc){
             System.out.println(exc.toString());
         }
 
     }
 
-    public void run(){}
+    public void run(){
+
+    }
+
+    @Override
+    public void send(String s) throws RemoteException {
+
+    }
 }
